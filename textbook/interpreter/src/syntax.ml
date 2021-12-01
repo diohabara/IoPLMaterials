@@ -5,6 +5,8 @@ type binOp =
   | Plus
   | Mult
   | Lt
+  | And
+  | Or
 
 type exp =
   | Var of id
