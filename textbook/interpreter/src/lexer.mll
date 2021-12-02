@@ -11,11 +11,11 @@ let reservedWords = [
 
 rule main = parse
   (* ignore spacing and newline characters *)
-  [' ' '\009' '\012' '\n']+     { main lexbuf }
+  [' ' '\r' '\t' '\n']+     { main lexbuf }
 
 | "-"? ['0'-'9']+
     { Parser.INTV (int_of_string (Lexing.lexeme lexbuf)) }
-
+| "(*" { comment lexbuf }
 | "(" { Parser.LPAREN }
 | ")" { Parser.RPAREN }
 | ";;" { Parser.SEMISEMI }
@@ -32,5 +32,8 @@ rule main = parse
       _ -> Parser.ID id
      }
 | eof { exit 0 }
+and comment = parse
+| "*)" { main lexbuf }
+| _ { comment lexbuf }
 
 
