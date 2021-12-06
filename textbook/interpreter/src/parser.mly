@@ -8,6 +8,7 @@ open Syntax
 %token AND OR
 %token LET IN EQ
 %token RARROW FUN
+%token REC
 %token EOF
 
 %token <int> INTV
@@ -20,6 +21,7 @@ open Syntax
 toplevel :
   | e=Expr SEMISEMI { Exp e }
   | LET x=ID EQ e=Expr SEMISEMI { Decl (x, e) }
+  | LET REC x=ID EQ FUN p=ID RARROW e=Expr SEMISEMI { RecDecl (x, p, e) }
 
 Expr :
   | e=IfExpr { e }
@@ -27,6 +29,10 @@ Expr :
   | e=LExpr { e }
   | e=LETExpr { e }
   | e=FunExpr { e }
+  | e=LetRecExpr { e }
+
+LetRecExpr:
+  | LET REC i=ID EQ FUN p=ID RARROW e1=Expr IN e2=Expr { LetRecExp(i, p, e1, e2) }
 
 FunExpr:
   | FUN i=ID RARROW e=Expr { FunExp(i, e) }
