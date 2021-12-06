@@ -6,6 +6,7 @@ open Syntax
 %token PLUS MULT LT
 %token IF THEN ELSE TRUE FALSE
 %token AND OR
+%token LET IN EQ
 %token EOF
 
 %token <int> INTV
@@ -17,11 +18,16 @@ open Syntax
 
 toplevel :
     e=Expr SEMISEMI { Exp e }
+    | LET x=ID EQ e=Expr SEMISEMI { Decl (x, e) }
 
 Expr :
     e=IfExpr { e }
   | e=LTExpr { e }
   | e=LExpr { e }
+  | e=LETExpr { e }
+
+LETExpr :
+    LET x=ID EQ e1=Expr IN e2=Expr { LetExp (x, e1, e2) }
 
 LTExpr :
     l=PExpr LT r=PExpr { BinOp (Lt, l, r) }
