@@ -7,6 +7,7 @@ open Syntax
 %token IF THEN ELSE TRUE FALSE
 %token AND OR
 %token LET IN EQ
+%token RARROW FUN
 %token EOF
 
 %token <int> INTV
@@ -17,28 +18,36 @@ open Syntax
 %%
 
 toplevel :
-    e=Expr SEMISEMI { Exp e }
-    | LET x=ID EQ e=Expr SEMISEMI { Decl (x, e) }
+  | e=Expr SEMISEMI { Exp e }
+  | LET x=ID EQ e=Expr SEMISEMI { Decl (x, e) }
 
 Expr :
-    e=IfExpr { e }
+  | e=IfExpr { e }
   | e=LTExpr { e }
   | e=LExpr { e }
   | e=LETExpr { e }
+  | e=FunExpr { e }
+
+FunExpr:
+  | FUN i=ID RARROW e=Expr { FunExp(i, e) }
 
 LETExpr :
-    LET x=ID EQ e1=Expr IN e2=Expr { LetExp (x, e1, e2) }
+  | LET x=ID EQ e1=Expr IN e2=Expr { LetExp (x, e1, e2) }
 
 LTExpr :
-    l=PExpr LT r=PExpr { BinOp (Lt, l, r) }
+  | l=PExpr LT r=PExpr { BinOp (Lt, l, r) }
   | e=PExpr { e }
 
 PExpr :
-    l=PExpr PLUS r=MExpr { BinOp (Plus, l, r) }
+  | l=PExpr PLUS r=MExpr { BinOp (Plus, l, r) }
   | e=MExpr { e }
 
 MExpr :
-    l=MExpr MULT r=AExpr { BinOp (Mult, l, r) }
+  | l=MExpr MULT r=AExpr { BinOp (Mult, l, r) }
+  | e=AppExpr { e }
+
+AppExpr:
+  | e1=AppExpr e2=AExpr { AppExp (e1, e2) }
   | e=AExpr { e }
 
 LExpr:
@@ -46,11 +55,11 @@ LExpr:
   | l=AExpr OR r=AExpr { BinOp (Or, l, r) }
 
 AExpr :
-    i=INTV { ILit i }
+  | i=INTV { ILit i }
   | TRUE   { BLit true }
   | FALSE  { BLit false }
   | i=ID   { Var i }
   | LPAREN e=Expr RPAREN { e }
 
 IfExpr :
-    IF c=Expr THEN t=Expr ELSE e=Expr { IfExp (c, t, e) }
+  | IF c=Expr THEN t=Expr ELSE e=Expr { IfExp (c, t, e) }
