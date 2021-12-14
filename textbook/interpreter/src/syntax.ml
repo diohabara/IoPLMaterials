@@ -29,6 +29,9 @@ type tyvar = int
 type ty =
   | TyInt
   | TyBool
-  | TyVar of tyvar
-  | TyFun of ty * ty
-  | TyList of ty
+
+let pp_ty typ =
+  match typ with
+  | TyInt -> print_string "int"
+  | TyBool -> print_string "bool"
+;;
