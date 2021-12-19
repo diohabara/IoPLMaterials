@@ -1,5 +1,6 @@
 open Eval
 open Typing
+open Syntax
 
 let rec read_eval_print env tyenv =
   print_string "# ";

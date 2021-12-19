@@ -37,7 +37,7 @@ let pp_ty typ =
   | TyInt -> print_string "int"
   | TyBool -> print_string "bool"
   | TyVar _ -> print_string "tyvar"
-  | TyFun _, _ -> print_string "tyfun"
+  | TyFun (_, _) -> print_string "tyfun"
 ;;
 
 let fresh_tyvar =
